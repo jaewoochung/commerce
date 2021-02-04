@@ -1,0 +1,32 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h5>Listing: {{ listing.title }}</h5>
+    <strong>Price: </strong>${{ listing.bid }} <br>
+
+    <div class="col-md-6">
+        <img src="{{ listing.image }}" class="img-thumbnail">
+    </div>
+    <em>{{ listing.num_bids }} bid(s) so far</em>
+    {% if user.is_authenticated %}
+        <form action="{% url 'bid' listing.id %}" method="post">
+            {% csrf_token %}
+            <input type="number" name="bid" placeholder="Bid" min="{{ listing.bid }}">
+            <input type="hidden" name="bidder" value="{{ user.username }}">
+            <input class="btn btn-primary" type="submit" value="Place Bid">
+        </form>
+    {% else %}
+    {% endif %}
+
+
+    <h5>Details</h5>
+    <li>Listed by: {{ listingUser.username }}</li>
+    <li>Description: {{ listing.description }}</li>
+    <li>Email: {{ listingUser.email }}</li>
+    {% if user.id == listing.user_id %}
+        <form action="{% url 'close_auction' listing.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" class="btn btn-secondary" value="Close Auction">
+        </form>
+    {%  endif%}
+{% endblock %}
